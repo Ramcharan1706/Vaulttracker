@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_ENVIRONMENT: string
+  readonly VITE_APP_ID: string
+  readonly VITE_BACKEND_URL: string
 
   readonly VITE_ALGOD_TOKEN: string
   readonly VITE_ALGOD_SERVER: string
@@ -17,6 +19,7 @@ interface ImportMetaEnv {
   readonly VITE_KMD_PORT: string
   readonly VITE_KMD_PASSWORD: string
   readonly VITE_KMD_WALLET: string
+  readonly DEV: boolean
 }
 
 interface ImportMeta {

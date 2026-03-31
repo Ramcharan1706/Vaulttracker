@@ -12,4 +12,18 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/algod': {
+        target: 'http://localhost:4001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/algod/, ''),
+      },
+      '/indexer': {
+        target: 'http://localhost:8980',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/indexer/, ''),
+      },
+    },
+  },
 })

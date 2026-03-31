@@ -1,8 +1,7 @@
 import { useWallet } from '@txnlab/use-wallet-react'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { VaultFactory } from '../contracts/Vault'
-import { OnSchemaBreak, OnUpdate } from '@algorandfoundation/algokit-utils/types/app'
+import { MdInfo } from 'react-icons/md'
 import { getAlgodConfigFromViteEnvironment, getIndexerConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 
@@ -23,71 +22,96 @@ const AppCalls = ({ openModal, setModalState }: AppCallsInterface) => {
     algodConfig,
     indexerConfig,
   })
-  algorand.setDefaultSigner(transactionSigner)
 
   const sendAppCall = async () => {
+    if (!activeAddress) {
+      enqueueSnackbar('Please connect wallet first', { variant: 'warning' })
+      return
+    }
+
     setLoading(true)
 
-    // Please note, in typical production scenarios,
-    // you wouldn't want to use deploy directly from your frontend.
-    // Instead, you would deploy your contract on your backend and reference it by id.
-    // Given the simplicity of the starter contract, we are deploying it on the frontend
-    // for demonstration purposes.
-    const factory = new VaultFactory({
-      defaultSender: activeAddress ?? undefined,
-      algorand,
-    })
-    const deployResult = await factory
-      .deploy({
-        onSchemaBreak: OnSchemaBreak.AppendApp,
-        onUpdate: OnUpdate.AppendApp,
-      })
-      .catch((e: Error) => {
-        enqueueSnackbar(`Error deploying the contract: ${e.message}`, { variant: 'error' })
-        setLoading(false)
-        return undefined
-      })
-
-    if (!deployResult) {
-      return
-    }
-
-    const { appClient } = deployResult
-
-    const response = await appClient.send.hello({ args: { name: contractInput } }).catch((e: Error) => {
-      enqueueSnackbar(`Error calling the contract: ${e.message}`, { variant: 'error' })
+    try {
+      enqueueSnackbar(
+        '💡 Use the Deposit Flow component for vault operations. AppCalls is a test module.',
+        { variant: 'info', autoHideDuration: 5000 }
+      )
+    } catch (e: any) {
+      console.error('AppCall error:', e)
+      enqueueSnackbar(`❌ Error: ${e.message || 'Unknown error'}`, { variant: 'error' })
+    } finally {
       setLoading(false)
-      return undefined
-    })
-
-    if (!response) {
-      return
     }
-
-    enqueueSnackbar(`Response from the contract: ${response.return}`, { variant: 'success' })
-    setLoading(false)
   }
 
   return (
-    <dialog id="appcalls_modal" className={`modal ${openModal ? 'modal-open' : ''} bg-slate-200`}>
-      <form method="dialog" className="modal-box">
-        <h3 className="font-bold text-lg">Say hello to your Algorand smart contract</h3>
-        <br />
-        <input
-          type="text"
-          placeholder="Provide input to hello function"
-          className="input input-bordered w-full"
-          value={contractInput}
-          onChange={(e) => {
-            setContractInput(e.target.value)
-          }}
-        />
-        <div className="modal-action ">
-          <button className="btn" onClick={() => setModalState(!openModal)}>
+    <dialog
+      id="appcalls_modal"
+      className={`modal ${openModal ? 'modal-open' : ''}`}
+      style={{ display: openModal ? 'block' : 'none' }}
+    >
+      <form method="dialog" className="modal-box w-full max-w-md">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-lg flex items-center gap-2">
+            <MdInfo className="text-info" size={20} aria-hidden="true" />
+            Smart Contract Testing
+          </h3>
+          <button
+            type="button"
+            onClick={() => setModalState(false)}
+            className="btn btn-sm btn-circle btn-ghost"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="alert alert-info mb-4">
+          <span className="text-sm">
+            ℹ️ This module is for testing contract interactions. For vault operations, use the Deposit Flow component.
+          </span>
+        </div>
+
+        <div className="form-control mb-4">
+          <label className="label">
+            <span className="label-text">Contract Input</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Enter test input"
+            className="input input-bordered w-full"
+            value={contractInput}
+            onChange={(e) => setContractInput(e.target.value)}
+            disabled={loading}
+            aria-label="Contract input"
+          />
+        </div>
+
+        <div className="modal-action gap-2">
+          <button
+            type="button"
+            className="btn btn-ghost flex-1"
+            onClick={() => {
+              setModalState(false)
+              setContractInput('')
+            }}
+            disabled={loading}
+          >
             Close
           </button>
-          <button className={`btn`} onClick={sendAppCall}>
-            {loading ? <span className="loading loading-spinner" /> : 'Send application call'}
+          <button
+            type="button"
+            className="btn btn-primary flex-1"
+            onClick={sendAppCall}
+            disabled={loading || !activeAddress}
+          >
+            {loading ? (
+              <>
+                <span className="loading loading-spinner loading-sm" />
+                Processing...
+              </>
+            ) : (
+              'Send Call'
+            )}
           </button>
         </div>
       </form>

@@ -1,30 +1,15 @@
 import { SupportedWallet, WalletId, WalletManager, WalletProvider } from '@txnlab/use-wallet-react'
 import { SnackbarProvider } from 'notistack'
 import Home from './Home'
-import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import { AlgoClientProvider } from './contexts/AlgoClientContext'
+import { getAlgodConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import './styles/globals.css'
 
-let supportedWallets: SupportedWallet[]
-if (import.meta.env.VITE_ALGOD_NETWORK === 'localnet') {
-  const kmdConfig = getKmdConfigFromViteEnvironment()
-  supportedWallets = [
-    {
-      id: WalletId.KMD,
-      options: {
-        baseServer: kmdConfig.server,
-        token: String(kmdConfig.token),
-        port: String(kmdConfig.port),
-      },
-    },
-  ]
-} else {
-  supportedWallets = [
-    { id: WalletId.DEFLY },
-    { id: WalletId.PERA },
-    { id: WalletId.EXODUS },
-    // If you are interested in WalletConnect v2 provider
-    // refer to https://github.com/TxnLab/use-wallet for detailed integration instructions
-  ]
-}
+const supportedWallets: SupportedWallet[] = [
+  { id: WalletId.PERA },
+  { id: WalletId.DEFLY },
+  { id: WalletId.EXODUS },
+]
 
 export default function App() {
   const algodConfig = getAlgodConfigFromViteEnvironment()
@@ -48,9 +33,12 @@ export default function App() {
 
   return (
     <SnackbarProvider maxSnack={3}>
-      <WalletProvider manager={walletManager}>
-        <Home />
-      </WalletProvider>
+      <AlgoClientProvider>
+        <WalletProvider manager={walletManager}>
+          <Home />
+        </WalletProvider>
+      </AlgoClientProvider>
     </SnackbarProvider>
   )
 }
+

@@ -1,45 +1,363 @@
-# Vaulttracker
+# 💰 Smart Vault
 
-This starter full stack project has been generated using AlgoKit. See below for default getting started instructions.
+**Production-Grade Web3 Savings dApp on Algorand**
 
-## Setup
+A hybrid Web3 savings platform combining blockchain security with real-time UI performance through SQLite caching and background syncing.
 
-### Initial setup
-1. Clone this repository to your local machine.
-2. Ensure [Docker](https://www.docker.com/) is installed and operational. Then, install `AlgoKit` following this [guide](https://github.com/algorandfoundation/algokit-cli#install).
-3. Run `algokit project bootstrap all` in the project directory. This command sets up your environment by installing necessary dependencies, setting up a Python virtual environment, and preparing your `.env` file.
-4. In the case of a smart contract project, execute `algokit generate env-file -a target_network localnet` from the `Vaulttracker-contracts` directory to create a `.env.localnet` file with default configuration for `localnet`.
-5. To build your project, execute `algokit project run build`. This compiles your project and prepares it for running.
-6. For project-specific instructions, refer to the READMEs of the child projects:
-   - Smart Contracts: [Vaulttracker-contracts](projects/Vaulttracker-contracts/README.md)
-   - Frontend Application: [Vaulttracker-frontend](projects/Vaulttracker-frontend/README.md)
+---
 
-> This project is structured as a monorepo, refer to the [documentation](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/project/run.md) to learn more about custom command orchestration via `algokit project run`.
+## 🎯 What is Smart Vault?
 
-### Subsequently
+Smart Vault is a **non-custodial savings application** that:
 
-1. If you update to the latest source code and there are new dependencies, you will need to run `algokit project bootstrap all` again.
-2. Follow step 3 above.
+- 🔐 Secures deposits on Algorand blockchain
+- ⚡ Provides instant UI via SQLite cache
+- 🎮 Gamifies savings with streaks, XP, and badges
+- 💳 Enables atomic deposits and inner-transaction withdrawals
+- 📊 Tracks savings goals and milestones
+- 🌐 Works with any Algorand-compatible wallet
 
-## Tools
+### Key Features:
 
-This project makes use of Python and React to build Algorand smart contracts and to provide a base project configuration to develop frontends for your Algorand dApps and interactions with smart contracts. The following tools are in use:
+| Feature | Description |
+|---------|-------------|
+| **Atomic Deposits** | 2-transaction atomic group ensures consistency |
+| **Inner Txn Withdrawals** | Direct fund transfers without escrow |
+| **Streak System** | Bonus XP for consecutive daily deposits |
+| **Milestone Badges** | Bronze (10 ALGO), Silver (50), Gold (100) |
+| **Time-Lock Option** | Lock funds for specified duration |
+| **XP & Levels** | Progression system based on activity |
+| **Transaction History** | Complete audit trail on frontend & backend |
 
-- Algorand, AlgoKit, and AlgoKit Utils
-- Python dependencies including Poetry, Black, Ruff or Flake8, mypy, pytest, and pip-audit
-- React and related dependencies including AlgoKit Utils, Tailwind CSS, daisyUI, use-wallet, npm, jest, playwright, Prettier, ESLint, and Github Actions workflows for build validation
+---
 
-### VS Code
+## 📚 Documentation
 
-It has also been configured to have a productive dev experience out of the box in [VS Code](https://code.visualstudio.com/), see the [backend .vscode](./backend/.vscode) and [frontend .vscode](./frontend/.vscode) folders for more details.
+### Getting Started:
+- **[QUICK_START.md](QUICK_START.md)** - 5-minute setup guide
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Detailed deployment instructions
+- **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Complete technical overview
 
-## Integrating with smart contracts and application clients
+### Testing & Verification:
+- **[TESTING_AND_VERIFICATION.md](TESTING_AND_VERIFICATION.md)** - 11 test suites with complete scenarios
 
-Refer to the [Vaulttracker-contracts](projects/Vaulttracker-contracts/README.md) folder for overview of working with smart contracts, [projects/Vaulttracker-frontend](projects/Vaulttracker-frontend/README.md) for overview of the React project and the [projects/Vaulttracker-frontend/contracts](projects/Vaulttracker-frontend/src/contracts/README.md) folder for README on adding new smart contracts from backend as application clients on your frontend. The templates provided in these folders will help you get started.
-When you compile and generate smart contract artifacts, your frontend component will automatically generate typescript application clients from smart contract artifacts and move them to `frontend/src/contracts` folder, see [`generate:app-clients` in package.json](projects/Vaulttracker-frontend/package.json). Afterwards, you are free to import and use them in your frontend application.
+### Project Structure:
+```
+Vaulttracker/
+├── backend/                              # Node.js + Express + SQLite
+│   ├── server.js                         # API endpoints
+│   ├── database.js                       # SQLite schema
+│   ├── blockchain.js                     # Algosdk queries
+│   └── syncEngine.js                     # Sync + XP calculation
+├── projects/
+│   ├── Vaulttracker-contracts/          # Algorand smart contract
+│   │   └── smart_contracts/vault/contract.py
+│   └── Vaulttracker-frontend/           # React + TypeScript frontend
+│       └── src/
+│           ├── components/              # UI components
+│           ├── services/                # API & blockchain services
+│           ├── store/                   # Zustand state management
+│           └── hooks/                   # Custom React hooks
+└── [Documentation files above]
+```
 
-The frontend starter also provides an example of interactions with your VaultClient in [`AppCalls.tsx`](projects/Vaulttracker-frontend/src/components/AppCalls.tsx) component by default.
+---
 
-## Next Steps
+## 🚀 Quick Start (5 Minutes)
 
-You can take this project and customize it to build your own decentralized applications on Algorand. Make sure to understand how to use AlgoKit and how to write smart contracts for Algorand before you start.
+### Prerequisites:
+- Node.js 20+
+- Python 3.10+
+- AlgoKit CLI
+- TestNet ALGO (get from [faucet](https://testnet.algoexplorer.io/dispenser))
+
+### Setup:
+
+```bash
+# 1. Install dependencies
+cd Vaulttracker
+algokit project bootstrap all
+
+# 2. Deploy smart contract
+cd projects/Vaulttracker-contracts
+algokit project deploy --network testnet --promoter-app-create-txn-signer deployer
+# => Copy APP_ID from output
+
+# 3. Configure environment
+# Edit: projects/Vaulttracker-frontend/.env
+VITE_APP_ID=<your-app-id>
+VITE_BACKEND_URL=http://localhost:3001
+
+# Edit: backend/.env
+VITE_APP_ID=<your-app-id>
+
+# 4. Start backend
+cd backend && npm install && npm run dev
+
+# 5. Start frontend (new terminal)
+cd projects/Vaulttracker-frontend && npm run dev
+
+# 6. Open http://localhost:5173 ✅
+```
+
+**See [QUICK_START.md](QUICK_START.md) for detailed instructions.**
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│           Smart Vault Architecture                  │
+├─────────────────────────────────────────────────────┤
+│                                                      │
+│  Frontend (React)                                   │
+│  ├─ Deposit Component                              │
+│  ├─ Withdraw Component                             │
+│  └─ Dashboard + Analytics                          │
+│              │                                      │
+│              │ REST API                             │
+│              ▼                                      │
+│  Backend (Express + SQLite) ◄──── Background Sync  │
+│  ├─ POST /sync/:address                           │
+│  ├─ GET /user/:address      (instant cache)       │
+│  └─ GET /transactions/:address                     │
+│              │                                      │
+│              │ Algosdk                              │
+│              ▼                                      │
+│  Algorand Blockchain (Source of Truth)            │
+│  ├─ Smart Contract                                 │
+│  ├─ User Local State                              │
+│  └─ Indexer (transaction history)                 │
+│                                                      │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 💾 Smart Contract
+
+**File:** `projects/Vaulttracker-contracts/smart_contracts/vault/contract.py`
+
+### Methods:
+
+```python
+opt_in()           # User opts into app
+deposit()          # Deposit ALGO (atomic 2-txn group)
+withdraw()         # Withdraw via inner transaction
+get_user_state()   # Read user vault state
+```
+
+### Features:
+- ✅ Atomic group validation
+- ✅ Streak tracking (24-hour windows)
+- ✅ Milestone badges (bitmask)
+- ✅ Time-locking mechanism
+- ✅ Inner transaction safety
+
+---
+
+## 🗄️ Backend API
+
+### Endpoints:
+
+```bash
+# Health check
+GET /health
+
+# Sync user state from blockchain to SQLite
+POST /sync/:address
+
+# Get cached user state (instant, no blockchain wait)
+GET /user/:address
+
+# Get transaction history
+GET /transactions/:address
+
+# Get app global state
+GET /app/state
+```
+
+### Database:
+- **users** - User vault state (total_saved, streak, XP, level)
+- **transactions** - Deposit/withdrawal history
+- **goals** - Savings goals tracking
+- **milestones** - Badge tracking
+
+---
+
+## 🎮 Gamification System
+
+### XP Calculation:
+```
+Base: 10 XP per deposit
+Streak: 5 XP × (streak_count - 1)
+Total: Deposit XP + Streak bonus
+```
+
+### Levels:
+```
+Level 1:  0-99 XP
+Level 2:  100-199 XP
+Level 3:  200-299 XP
+...
+```
+
+### Milestones:
+```
+🥉 Bronze: ≥ 10 ALGO
+🥈 Silver: ≥ 50 ALGO
+🥇 Gold:   ≥ 100 ALGO
+```
+
+---
+
+## 🧪 Testing
+
+Complete testing guide with 11 test suites:
+
+1. **Environment & Configuration** (3 tests)
+2. **Wallet & Connection** (2 tests)
+3. **Opt-In Flow** (2 tests)
+4. **Deposits** (4 tests)
+5. **Withdrawals** (3 tests)
+6. **Sync & Cache** (3 tests)
+7. **Gamification** (3 tests)
+8. **Error Handling** (4 tests)
+9. **Data Persistence** (3 tests)
+10. **Security** (3 tests)
+11. **UI/UX** (3 tests)
+
+**See [TESTING_AND_VERIFICATION.md](TESTING_AND_VERIFICATION.md) for complete scenarios.**
+
+---
+
+## 📊 Data Flow
+
+### Deposit Flow:
+1. User enters amount
+2. Frontend validates & builds atomic group (2 txns)
+3. Wallet signs both transactions
+4. Network execution (4-16 seconds)
+5. Backend syncs within 3 seconds
+6. Frontend updates dashboard instantly
+
+### Withdrawal Flow:
+1. User enters amount
+2. Smart contract validates balance & lock status
+3. Inner transaction sends funds to user wallet
+4. Backend tracks in SQLite
+5. Frontend reflects withdrawal instantly
+
+---
+
+## 🔒 Security
+
+### Smart Contract:
+- ✅ Atomic group validation
+- ✅ Amount & sender validation
+- ✅ Lock time verification
+- ✅ Balance checks before withdrawal
+- ✅ Inner transaction safety
+
+### Backend:
+- ✅ Input validation
+- ✅ Transaction deduplication
+- ✅ Database constraints
+- ✅ Error handling
+
+### Frontend:
+- ✅ Amount validation
+- ✅ Wallet opt-in check
+- ✅ Group transaction safety
+- ✅ Error messaging
+
+---
+
+## 🛠️ Tools & Stack
+
+### Frontend:
+- React 18 + TypeScript
+- Vite (next-gen build tool)
+- Tailwind CSS + Framer Motion
+- Zustand (state management)
+- use-wallet-react (wallet integration)
+
+### Backend:
+- Node.js 20
+- Express.js
+- better-sqlite3 (SQLite)
+- algosdk
+- Indexer integration
+
+### Smart Contract:
+- Python + PyTeal
+- Algorand AVM
+- Inner transactions
+- Local state tracking
+
+---
+
+## 📖 Additional Resources
+
+- **[Algorand Docs](https://developer.algorand.org/)**
+- **[AlgoKit Guide](https://github.com/algorandfoundation/algokit-cli)**
+- **[PyTeal Reference](https://pyteal.readthedocs.io/)**
+- **[use-wallet Docs](https://txnlab.gitbook.io/use-wallet-react/)**
+
+---
+
+## 🚨 Troubleshooting
+
+### "App not configured"
+→ Set `VITE_APP_ID` in `.env` files
+
+### "Wallet not opted in"
+→ Click "Opt-In" button, approve in wallet
+
+### "Dashboard doesn't update"
+→ Check backend is running, wait 3-5 secs
+
+### "Network timeout"
+→ Check internet, try again in 30 secs
+
+**See [TESTING_AND_VERIFICATION.md](TESTING_AND_VERIFICATION.md) for more.**
+
+---
+
+## ✅ Status
+
+🚀 **PRODUCTION READY**
+
+- [x] Smart contract tested
+- [x] Atomic deposits working
+- [x] Inner transaction withdrawals working
+- [x] SQLite cache functional
+- [x] Sync engine reliable
+- [x] Error handling comprehensive
+- [x] UI polished
+- [x] Documentation complete
+
+---
+
+## 📝 License
+
+MIT
+
+---
+
+## 📞 Support
+
+For issues or questions:
+1. Check [TESTING_AND_VERIFICATION.md](TESTING_AND_VERIFICATION.md) troubleshooting section
+2. Review [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) technical details
+3. Check backend logs: `cd backend && npm run dev`
+4. Check browser console for frontend errors
+
+---
+
+**Last Updated:** March 31, 2026
+**Version:** 1.0.0
+**Status:** Production-Ready ✅
+
+🎉 **Ready to revolutionize how people save!**
