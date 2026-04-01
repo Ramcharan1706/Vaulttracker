@@ -2,10 +2,9 @@ import { create } from 'zustand'
 
 export interface UserState {
     totalSaved: number // in microAlgos
-    lastDepositTime: number
+    streakCount: number // consecutive deposit days
+    lastDepositTime: number // timestamp of last deposit
     milestonesUnlocked: number // bitmask: 1=bronze, 2=silver, 4=gold
-    streakCount: number // NEW: consecutive deposit days
-    vaultUnlockTime: number // NEW: timestamp when locked funds unlock (0 = no lock)
 }
 
 export interface MilestoneConfig {

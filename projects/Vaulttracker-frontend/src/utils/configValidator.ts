@@ -19,13 +19,7 @@ export const getConfigStatus = (): ConfigStatus => {
         }
     }
 
-    if (appId === 12345678) {
-        return {
-            isConfigured: false,
-            appId: 12345678,
-            message: '⚙️ Using placeholder APP_ID (12345678). Deploy your contract and update VITE_APP_ID in .env.local'
-        }
-    }
+
 
     return {
         isConfigured: true,

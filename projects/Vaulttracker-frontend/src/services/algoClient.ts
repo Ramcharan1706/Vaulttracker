@@ -1,33 +1,23 @@
-import { Algodv2, Indexer, Transaction, AtomicTransactionComposer } from 'algosdk'
+import { Algodv2, Indexer, Transaction } from 'algosdk'
 import * as algosdk from 'algosdk'
 
 export interface AlgoClientConfig {
     algodServer: string
-    algodPort: string
+    algodPort: string | number
     algodToken: string
     indexerServer: string
-    indexerPort: string
+    indexerPort: string | number
     indexerToken: string
 }
-
 
 let algodClient: Algodv2 | null = null
 let indexerClient: Indexer | null = null
 
 export const initializeAlgoClients = (config: AlgoClientConfig) => {
-    // In development, use Vite proxy to avoid CORS issues
-    // Proxy routes: /algod -> localhost:4001, /indexer -> localhost:8980
-    const isDev = import.meta.env.DEV
-
-    if (isDev) {
-        // Use proxy paths (same-origin requests through dev server)
-        algodClient = new Algodv2(config.algodToken, window.location.origin, '/algod')
-        indexerClient = new Indexer(config.indexerToken, window.location.origin, '/indexer')
-    } else {
-        // Production: use direct URLs
-        algodClient = new Algodv2(config.algodToken, config.algodServer, config.algodPort)
-        indexerClient = new Indexer(config.indexerToken, config.indexerServer, config.indexerPort)
-    }
+    // Direct connection to Algorand node (no proxy)
+    const port = parseInt(config.algodPort.toString())
+    algodClient = new Algodv2(config.algodToken, config.algodServer, port)
+    indexerClient = new Indexer(config.indexerToken, config.indexerServer, parseInt(config.indexerPort.toString()))
 }
 
 export const getAlgodClient = (): Algodv2 => {

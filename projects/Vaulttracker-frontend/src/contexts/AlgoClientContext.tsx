@@ -57,14 +57,9 @@ export const AlgoClientProvider: React.FC<AlgoClientProviderProps> = ({ children
             indexerToken: String(indexerConfig.token),
           });
 
-          // Test connection using global getters
+          // Get clients (don't require health check to pass)
           const algod = getAlgodClient();
           const indexer = getIndexerClient();
-          await Promise.all([
-            algod.healthCheck().do().catch(() => null),
-            indexer.lookupAccountByID('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ').do().catch(() => null),
-          ]);
-
 
           if (isMounted) {
             setClients({

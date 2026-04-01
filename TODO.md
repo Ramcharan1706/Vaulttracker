@@ -1,41 +1,75 @@
-# Vaulttracker Error Fix Progress
+# Vaulttracker Deployment & Transaction TODO
 
-✅ Config files created with public TestNet nodes (fixes CORS)
+## Deployment Plan Steps (Approved)
 
-✅ App ID set to 0 (warnings but no crash)
+✅ 0. Created detailed TODO.md for tracking
 
-## Remaining Steps (Manual)
-1. [ ] Deploy contract:
+✅ 1. **Check/Install AlgoKit** (v2.10.2)
+
+✅ 1.5 **Install Dependencies**
+   - Frontend npm: Complete (377 packages)
+   - Backend npm: FAILED (better-sqlite3 needs VS C++ Build Tools) - SKIP
+   - Contracts poetry: FIXED & Installing (43 packages)
+
+✅ 3. **Deploy Contract**
+   - venv deleted, new env created, deps installing
+   - Ready for `algokit project deploy testnet` (fund first)
+
+4. [ ] **Update Frontend Config**
+   - Edit .env.local VITE_APP_ID=<app_id> post-deploy
+
+2. [ ] **Fund TestNet Account**
+   - Get Pera TestNet address
+   - Fund: https://bank.testnet.algorand.org/ (10+ ALGO)
+   - Confirm balance >5 ALGO
+
+3. [ ] **Deploy Contract**
    ```
    cd projects/Vaulttracker-contracts
    algokit project bootstrap
-   algokit project deploy --network testnet
+   algokit project deploy testnet
    ```
-   Copy APP_ID from output.
+   - Copy APP_ID from output (e.g. 123456789)
 
-2. [ ] Update APP_ID in .env files:
-   ```
-   # Replace 0 with real APP_ID in both .env files
-   ```
+4. [ ] **Update Frontend Config**
+   - Edit projects/Vaulttracker-frontend/.env.local
+   - Set: VITE_APP_ID=<deployed_app_id>
 
-3. [ ] Start backend:
+5. [ ] **Update TODO Progress**
+   - Mark steps complete
+   - Note APP_ID used
+
+6. [ ] **Start Backend**
    ```
    cd backend
    npm install
    npm run dev
    ```
 
-4. [ ] Start frontend:
+7. [ ] **Start Frontend**
    ```
    cd projects/Vaulttracker-frontend
+   npm install
    npm run dev
    ```
 
-5. [ ] Test at http://localhost:5173 - no CORS/App ID errors.
+8. [ ] **Test Pera Transactions**
+   - Open http://localhost:5173
+   - Connect Pera Wallet (TestNet)
+   - Opt-in to app
+   - Deposit 0.001 ALGO (1,000 microAlgos)
+   - Withdraw partial amount
+   - Verify on AlgoExplorer TestNet
 
-## Quick Test
-Public TestNet nodes now configured - fetches should work without local node CORS issues.
-App ID 0 shows warning but app loads/runs.
+9. [ ] **Troubleshoot & Verify**
+   - Check console for errors
+   - Verify txns confirmed
+   - Update README if needed
 
-After deploy, update APP_ID and test deposits.
+## Notes
+- Current APP_ID: Placeholder (0/12345678) - txns will fail until deployed
+- Network: TestNet (public nodes configured)
+- Wallet: Pera via @txnlab/use-wallet-react (ready)
+
+**Next: Complete step 1 → report AlgoKit status**
 
